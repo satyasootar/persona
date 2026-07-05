@@ -3,7 +3,10 @@ import { createMistralClient, MISTRAL_MODEL } from "@/lib/mistral";
 import { getPersona, type PersonaId } from "@/lib/personas";
 import type { ChatMessage } from "@/lib/personas/types";
 import { formatRagContext } from "@/lib/rag";
-import { isWebSearchConfigured, searchWeb } from "@/lib/search";
+import {
+  getWebSearchConfigError,
+  searchWeb,
+} from "@/lib/search";
 
 export const runtime = "nodejs";
 
@@ -41,27 +44,32 @@ export async function POST(request: Request) {
       return Response.json({ error: "Messages are required" }, { status: 400 });
     }
 
-    if (body.webSearch && !isWebSearchConfigured()) {
-      return Response.json(
-        {
-          error:
-            "Web search requires TAVILY_API_KEY in .env. Get one at https://tavily.com",
-        },
-        { status: 503 },
-      );
+    if (body.webSearch) {
+      const configError = getWebSearchConfigError();
+      if (configError) {
+        return Response.json({ error: configError }, { status: 503 });
+      }
     }
 
     const persona = getPersona(body.personaId);
 
     let ragContext: string | null = null;
     let searchResultCount = 0;
+    let searchWarning: string | null = null;
 
     if (body.webSearch) {
       const query = getLastUserMessage(body.messages);
       if (query) {
-        const { results, query: searchedQuery } = await searchWeb(query);
-        searchResultCount = results.length;
-        ragContext = formatRagContext(results, searchedQuery);
+        try {
+          const { results, query: searchedQuery } = await searchWeb(query);
+          searchResultCount = results.length;
+          ragContext = formatRagContext(results, searchedQuery);
+        } catch (error) {
+          searchWarning =
+            error instanceof Error
+              ? error.message
+              : "Web search failed. Answering without live results.";
+        }
       }
     }
 
@@ -117,6 +125,10 @@ export async function POST(request: Request) {
 
     if (updatedSummary) {
       headers.set(SUMMARY_HEADER, encodeURIComponent(updatedSummary));
+    }
+
+    if (searchWarning) {
+      headers.set("X-Web-Search-Error", encodeURIComponent(searchWarning));
     }
 
     return new Response(readable, { headers });

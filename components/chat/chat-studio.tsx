@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/tooltip";
 import {
   createMessageId,
+  parseSearchErrorHeader,
   parseSummaryHeader,
   usePersonaChat,
 } from "@/hooks/use-persona-chat";
@@ -40,6 +41,7 @@ export function ChatStudio() {
   const [input, setInput] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
   const [webSearch, setWebSearch] = useState(false);
+  const [searchWarning, setSearchWarning] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const persona = getPersona(activePersonaId);
@@ -72,6 +74,7 @@ export function ChatStudio() {
       if (!trimmed || isStreaming) return;
 
       setError(null);
+      setSearchWarning(null);
       setInput("");
 
       const userMessage = {
@@ -118,6 +121,11 @@ export function ChatStudio() {
         const nextSummary = parseSummaryHeader(response);
         if (nextSummary) {
           updateSummary(nextSummary);
+        }
+
+        const searchErr = parseSearchErrorHeader(response);
+        if (searchErr) {
+          setSearchWarning(searchErr);
         }
 
         const reader = response.body?.getReader();
@@ -276,6 +284,12 @@ export function ChatStudio() {
               {error ? (
                 <p className="mb-2 text-xs text-destructive" role="alert">
                   {error}
+                </p>
+              ) : null}
+
+              {searchWarning ? (
+                <p className="mb-2 text-xs text-amber-400/90" role="status">
+                  Web search unavailable: {searchWarning}
                 </p>
               ) : null}
 

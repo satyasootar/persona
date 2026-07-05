@@ -13,32 +13,52 @@ interface TavilyResponse {
   results: TavilyResult[];
 }
 
+function normalizeApiKey(raw: string | undefined): string {
+  return raw?.trim().replace(/^["']|["']$/g, "") ?? "";
+}
+
 export function isWebSearchConfigured(): boolean {
-  return Boolean(process.env.TAVILY_API_KEY?.trim());
+  const key = normalizeApiKey(process.env.TAVILY_API_KEY);
+  return key.length > 0 && key.startsWith("tvly-");
+}
+
+export function getWebSearchConfigError(): string | null {
+  const key = normalizeApiKey(process.env.TAVILY_API_KEY);
+
+  if (!key) {
+    return "Add TAVILY_API_KEY to .env — get a free key at https://tavily.com";
+  }
+
+  if (!key.startsWith("tvly-")) {
+    return "Invalid Tavily API key. Keys start with tvly- — copy yours from the Tavily dashboard.";
+  }
+
+  return null;
 }
 
 export async function searchWeb(
   query: string,
   maxResults = 5,
 ): Promise<WebSearchResponse> {
-  const apiKey = process.env.TAVILY_API_KEY?.trim();
-
-  if (!apiKey) {
-    throw new Error(
-      "TAVILY_API_KEY is not configured. Add it to .env for web search.",
-    );
+  const configError = getWebSearchConfigError();
+  if (configError) {
+    throw new Error(configError);
   }
 
+  const apiKey = normalizeApiKey(process.env.TAVILY_API_KEY);
   const trimmed = query.trim();
+
   if (!trimmed) {
     return { query: trimmed, results: [] };
   }
 
   const response = await fetch(TAVILY_ENDPOINT, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    },
     body: JSON.stringify({
-      api_key: apiKey,
       query: trimmed,
       search_depth: "basic",
       max_results: maxResults,
@@ -47,8 +67,13 @@ export async function searchWeb(
   });
 
   if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error(
+        "Tavily API key rejected (401). Copy a fresh key from https://tavily.com — it must start with tvly-",
+      );
+    }
     const detail = await response.text();
-    throw new Error(`Web search failed (${response.status}): ${detail}`);
+    throw new Error(`Web search failed (${response.status}). Try again later.`);
   }
 
   const data = (await response.json()) as TavilyResponse;

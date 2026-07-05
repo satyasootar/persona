@@ -114,3 +114,13 @@ export function parseSummaryHeader(response: Response): string | null {
     return raw;
   }
 }
+
+export function parseSearchErrorHeader(response: Response): string | null {
+  const raw = response.headers.get("X-Web-Search-Error");
+  if (!raw) return null;
+  try {
+    return decodeURIComponent(raw);
+  } catch {
+    return raw;
+  }
+}
