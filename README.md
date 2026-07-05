@@ -1,4 +1,4 @@
-# Mentor Studio (Persona)
+# Persona
 
 AI-powered chat that simulates interactive mentoring conversations with **Hitesh Choudhary** and **Piyush Garg** — two of India's most influential developer-educators. Switch personas, ask technical questions, and receive responses shaped by each mentor's real-life teaching philosophy, vocabulary, and pacing.
 
