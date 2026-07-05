@@ -1,36 +1,132 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Mentor Studio
 
-## Getting Started
+AI-powered chat that simulates conversations with **Hitesh Choudhary** and **Piyush Garg** — two of India's most influential developer-educators. Switch personas, ask technical questions, and get responses shaped by each mentor's real teaching style.
 
-First, run the development server:
+![Next.js](https://img.shields.io/badge/Next.js-16-black)
+![Mistral](https://img.shields.io/badge/LLM-Mistral-orange)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)
+
+## Features
+
+- **Dual persona chat** — Hitesh (chai-style Hinglish mentor) and Piyush (direct, project-first engineer-educator)
+- **Streaming responses** — real-time token streaming via Mistral API
+- **Per-persona memory** — separate chat histories stored in localStorage
+- **Shared-border studio UI** — shadcn-inspired components with a broadcast-workshop aesthetic
+- **Markdown rendering** — code blocks, lists, and formatted technical answers
+- **Web search RAG** — optional Tavily-powered retrieval for up-to-date answers
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| Framework | Next.js 16 (App Router) |
+| LLM | Mistral API via OpenAI SDK |
+| Styling | Tailwind CSS 4 + shadcn-style components |
+| Markdown | react-markdown + remark-gfm |
+
+## Quick Start
+
+### Prerequisites
+
+- Node.js 20+
+- A [Mistral API key](https://console.mistral.ai/)
+- A [Tavily API key](https://tavily.com) (optional, for web search)
+
+### Setup
 
 ```bash
+# Clone the repository
+git clone <your-repo-url>
+cd persona
+
+# Install dependencies
+npm install
+
+# Configure environment
+cp .env.example .env
+# Edit .env and add your MISTRAL_API_KEY
+
+# Run development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Environment Variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `MISTRAL_API_KEY` | Yes | Your Mistral API key |
+| `TAVILY_API_KEY` | No | Tavily API key for web search RAG (toggle in chat UI) |
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+persona/
+├── app/
+│   ├── api/chat/route.ts    # Streaming chat endpoint
+│   ├── layout.tsx
+│   ├── page.tsx
+│   └── globals.css
+├── components/
+│   ├── chat/                # Chat UI (studio, messages, sidebar)
+│   └── ui/                  # shadcn-style primitives
+├── lib/
+│   ├── personas/            # Persona definitions & system prompts
+│   ├── context/             # Sliding-window context management
+│   ├── search/              # Tavily web search
+│   ├── rag/                 # RAG context formatting
+│   └── mistral.ts           # OpenAI SDK → Mistral client
+├── hooks/
+│   └── use-persona-chat.ts  # Per-persona localStorage state
+└── docs/
+    ├── persona-data.md
+    ├── prompt-engineering.md
+    ├── context-management.md
+    └── sample-conversations.md
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Documentation
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Document | Description |
+|----------|-------------|
+| [Persona Data](docs/persona-data.md) | How persona knowledge was collected from public sources |
+| [Prompt Engineering](docs/prompt-engineering.md) | System prompt design and LLM configuration |
+| [Context Management](docs/context-management.md) | Sliding window, per-persona isolation, streaming |
+| [Sample Conversations](docs/sample-conversations.md) | Example Q&A demonstrating both personas |
 
-## Deploy on Vercel
+## Deployment
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Vercel (recommended)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Push to GitHub
+2. Import project on [Vercel](https://vercel.com)
+3. Add `MISTRAL_API_KEY` in Environment Variables
+4. Deploy
+
+```bash
+npm run build
+npm start
+```
+
+## Personas
+
+### Hitesh Choudhary
+
+- **Style**: Conversational Hinglish, chai-over-code metaphors, honest career advice
+- **Topics**: MERN, DSA, DevOps, TypeScript, system design
+- **Site**: [hitesh.ai](https://hitesh.ai/)
+
+### Piyush Garg
+
+- **Style**: Straightforward, fast-paced, project-first, architecture-focused
+- **Topics**: Node.js, Docker, GenAI/RAG, AWS, system design
+- **Site**: [piyushgarg.dev](https://www.piyushgarg.dev/)
+
+## Disclaimer
+
+This is an **educational AI simulation** for learning purposes. It is not affiliated with, endorsed by, or operated by Hitesh Choudhary or Piyush Garg. Responses are generated by an LLM guided by publicly available content patterns.
+
+## License
+
+MIT

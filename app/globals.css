@@ -1,26 +1,137 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0c0f14;
+  --foreground: #e8eaed;
+  --card: #12161d;
+  --card-foreground: #e8eaed;
+  --popover: #12161d;
+  --popover-foreground: #e8eaed;
+  --primary: #e8eaed;
+  --primary-foreground: #0c0f14;
+  --secondary: #1a1f28;
+  --secondary-foreground: #c4c9d4;
+  --muted: #1a1f28;
+  --muted-foreground: #8b93a3;
+  --accent: #1e2430;
+  --accent-foreground: #e8eaed;
+  --border: #252b36;
+  --ring: #4a5568;
+  --destructive: #ef4444;
+  --hitesh: #f59e0b;
+  --piyush: #06b6d4;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+  --color-destructive: var(--destructive);
+  --font-sans: var(--font-dm-sans);
+  --font-display: var(--font-syne);
+  --font-mono: var(--font-jetbrains);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  border-color: var(--border);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+}
+
+.font-display {
+  font-family: var(--font-syne), system-ui, sans-serif;
+}
+
+/* Subtle grid atmosphere — workshop / broadcast studio */
+.studio-grid {
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 48px 48px;
+  background-position: center top;
+  mask-image: linear-gradient(to bottom, black 0%, transparent 70%);
+}
+
+/* Syntax highlighting — tuned for dark chat bubbles */
+.markdown-body .hljs {
+  color: #e8eaed;
+  background: transparent;
+}
+
+.markdown-body .hljs-comment,
+.markdown-body .hljs-quote {
+  color: #8b93a3;
+  font-style: italic;
+}
+
+.markdown-body .hljs-keyword,
+.markdown-body .hljs-selector-tag,
+.markdown-body .hljs-built_in {
+  color: #c792ea;
+}
+
+.markdown-body .hljs-string,
+.markdown-body .hljs-attr,
+.markdown-body .hljs-symbol,
+.markdown-body .hljs-bullet {
+  color: #c3e88d;
+}
+
+.markdown-body .hljs-number,
+.markdown-body .hljs-literal {
+  color: #f78c6c;
+}
+
+.markdown-body .hljs-title,
+.markdown-body .hljs-section,
+.markdown-body .hljs-function .hljs-title {
+  color: #82aaff;
+}
+
+.markdown-body .hljs-variable,
+.markdown-body .hljs-template-variable,
+.markdown-body .hljs-type,
+.markdown-body .hljs-class .hljs-title {
+  color: #ffcb6b;
+}
+
+.markdown-body .hljs-meta,
+.markdown-body .hljs-regexp {
+  color: #89ddff;
+}
+
+.markdown-body .hljs-tag,
+.markdown-body .hljs-name {
+  color: #f07178;
+}
+
+.markdown-body .hljs-params {
+  color: #e8eaed;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
